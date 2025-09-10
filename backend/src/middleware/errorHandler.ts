@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/appError';
 
-// 404 handler
 export const notFound = (req: Request, res: Response) => {
   res.status(404).send({
     ok: false,
@@ -10,7 +9,6 @@ export const notFound = (req: Request, res: Response) => {
   });
 };
 
-// error handler
 export const errorHandler = (
   err: any,
   req: Request,
