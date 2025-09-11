@@ -1,0 +1,45 @@
+paths:
+  /api/todos/{id}:
+    delete:
+      summary: Delete todo by ID
+      tags: [Todos]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+          description: "Todo ID to delete"
+      responses:
+        204:
+          description: Todo successfully deleted (no content)
+        401:
+          description: Unauthorized - token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Authorization header missing"
+        404:
+          description: Todo not found or doesn't belong to user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Todo not found"

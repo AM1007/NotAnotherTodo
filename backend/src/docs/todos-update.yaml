@@ -1,0 +1,123 @@
+paths:
+  /api/todos/{id}:
+    put:
+      summary: Update todo by ID
+      tags: [Todos]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+          description: "Todo ID"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  example: "Updated project documentation"
+                  description: "Updated todo title (optional)"
+                description:
+                  type: string
+                  maxLength: 1000
+                  nullable: true
+                  example: "Write comprehensive API documentation with examples"
+                  description: "Updated todo description (optional, can be null to clear)"
+                completed:
+                  type: boolean
+                  example: true
+                  description: "Mark todo as completed/incomplete (optional)"
+              minProperties: 1
+              additionalProperties: false
+      responses:
+        200:
+          description: Todo successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Todo updated"
+                  todo:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: "Updated project documentation"
+                      description:
+                        type: string
+                        nullable: true
+                        example: "Write comprehensive API documentation with examples"
+                      completed:
+                        type: boolean
+                        example: true
+                      userId:
+                        type: integer
+                        example: 1
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2024-01-15T10:30:00.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2024-01-15T11:45:00.000Z"
+        400:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    oneOf:
+                      - example: "title length must be less than or equal to 200 characters long"
+                      - example: "At least one field must be provided"
+        401:
+          description: Unauthorized - token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Authorization header missing"
+        404:
+          description: Todo not found or doesn't belong to user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Todo not found"

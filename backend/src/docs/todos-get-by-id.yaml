@@ -1,0 +1,80 @@
+paths:
+  /api/todos/{id}:
+    get:
+      summary: Get todo by ID
+      tags: [Todos]
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+          description: "Todo ID"
+      responses:
+        200:
+          description: Todo found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  todo:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: "Complete project documentation"
+                      description:
+                        type: string
+                        nullable: true
+                        example: "Write comprehensive API documentation and user guides"
+                      completed:
+                        type: boolean
+                        example: false
+                      userId:
+                        type: integer
+                        example: 1
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2024-01-15T10:30:00.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2024-01-15T10:30:00.000Z"
+        401:
+          description: Unauthorized - token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Authorization header missing"
+        404:
+          description: Todo not found or doesn't belong to user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Todo not found"

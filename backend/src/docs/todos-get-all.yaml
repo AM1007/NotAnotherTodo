@@ -1,0 +1,64 @@
+paths:
+  /api/todos:
+    get:
+      summary: Get all user todos
+      tags: [Todos]
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of user todos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  todos:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        title:
+                          type: string
+                          example: "Buy groceries"
+                        description:
+                          type: string
+                          nullable: true
+                          example: "Milk, bread, eggs"
+                        completed:
+                          type: boolean
+                          example: false
+                        userId:
+                          type: integer
+                          example: 1
+                        createdAt:
+                          type: string
+                          format: date-time
+                          example: "2024-01-15T10:30:00.000Z"
+                        updatedAt:
+                          type: string
+                          format: date-time
+                          example: "2024-01-15T10:30:00.000Z"
+                  count:
+                    type: integer
+                    example: 3
+                    description: "Total number of todos"
+        401:
+          description: Unauthorized - token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Authorization header missing"

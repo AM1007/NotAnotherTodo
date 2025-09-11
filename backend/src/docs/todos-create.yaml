@@ -1,0 +1,97 @@
+paths:
+  /api/todos:
+    post:
+      summary: Create a new todo
+      tags: [Todos]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  example: "Complete project documentation"
+                  description: "Todo title (required)"
+                description:
+                  type: string
+                  maxLength: 1000
+                  nullable: true
+                  example: "Write comprehensive API documentation and user guides"
+                  description: "Optional todo description"
+      responses:
+        201:
+          description: Todo successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: "Todo created"
+                  todo:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                        example: "Complete project documentation"
+                      description:
+                        type: string
+                        nullable: true
+                        example: "Write comprehensive API documentation and user guides"
+                      completed:
+                        type: boolean
+                        example: false
+                      userId:
+                        type: integer
+                        example: 1
+                      createdAt:
+                        type: string
+                        format: date-time
+                        example: "2024-01-15T10:30:00.000Z"
+                      updatedAt:
+                        type: string
+                        format: date-time
+                        example: "2024-01-15T10:30:00.000Z"
+        400:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    oneOf:
+                      - example: "title is required"
+                      - example: "title length must be less than or equal to 200 characters long"
+        401:
+          description: Unauthorized - token missing or invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: "Authorization header missing"

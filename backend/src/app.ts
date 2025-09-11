@@ -4,6 +4,9 @@ import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
 
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './config/swagger';
+
 import { notFound, errorHandler } from './middleware/errorHandler';
 import { connectDb } from './db/sequelize';
 import { initializeModels, setupAssociations } from './db/associations';
@@ -20,6 +23,8 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get('/ping', (_, res) => res.send('pong'));
 
@@ -41,6 +46,7 @@ const start = async () => {
     
     app.listen(PORT, () => {
       console.log(` Server started at http://localhost:${PORT}`);
+      console.log(` Swagger UI: http://localhost:${PORT}/api-docs`);
     });
   } catch (err) {
     console.error(' Failed to start server:', err);
