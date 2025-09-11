@@ -28,6 +28,18 @@ REST API for TODO management with JWT authentication.
 - **Authentication:** JWT
 - **Documentation:** Swagger UI
 
+
+## 🗄️ Database Schema
+
+**Users Table**
+
+![user-table](./assets/user.png)
+
+**Todos Table**
+
+![todos-table](./assets/todos.png)
+
+
 ## 🌐 API Endpoints
 
 ### Authentication
