@@ -1,9 +1,9 @@
-import bcrypt from 'bcryptjs';
-import models from '../db/associations';
-import HttpError from '../helpers/httpError';
-import { HTTP_STATUS } from '../constants/httpStatus';
-import jwtHelpers from '../helpers/jwt';
-import { userNameRegexp } from '../constants/auth';
+import bcrypt from "bcryptjs";
+import models from "../db/associations";
+import HttpError from "../helpers/httpError";
+import { HTTP_STATUS } from "../constants/httpStatus";
+import jwtHelpers from "../helpers/jwt";
+import { userNameRegexp } from "../constants/auth";
 const { User } = models;
 import { WhereOptions } from "sequelize";
 
@@ -13,19 +13,19 @@ const findUser = async (query: WhereOptions) => {
 
 const validateUserName = (userName: string) => {
   if (!userName) {
-    return { valid: false, message: 'Username is required' };
+    return { valid: false, message: "Username is required" };
   }
   if (userName.length < 3 || userName.length > 30) {
     return {
       valid: false,
-      message: 'Name must be between 3 and 30 characters',
+      message: "Name must be between 3 and 30 characters",
     };
   }
   if (!userNameRegexp.test(userName)) {
     return {
       valid: false,
       message:
-        'Name should only contain letters, numbers, underscores, hyphens, dots and commas',
+        "Name should only contain letters, numbers, underscores, hyphens, dots and commas",
     };
   }
   return { valid: true };
@@ -45,7 +45,7 @@ const registerUser = async (userData: any) => {
   const existingUser = await findUser({ email });
 
   if (existingUser) {
-    throw HttpError(HTTP_STATUS.CONFLICT, 'Email already in use');
+    throw HttpError(HTTP_STATUS.CONFLICT, "Email already in use");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -57,8 +57,8 @@ const registerUser = async (userData: any) => {
   });
 
   const payload = { id: newUser.id, email };
-  const token = jwtHelpers.generateToken(payload);
-  const refreshToken = jwtHelpers.generateToken(payload, '7d');
+  const token = jwtHelpers.generateAccessToken(payload);
+  const refreshToken = jwtHelpers.generateRefreshToken(payload);
 
   await newUser.update({ token, refreshToken });
 
@@ -76,7 +76,7 @@ const signInUser = async (userData: any) => {
   const user = await findUser({ email });
 
   if (!user) {
-    throw HttpError(HTTP_STATUS.UNAUTHORIZED, 'Email or password is wrong');
+    throw HttpError(HTTP_STATUS.UNAUTHORIZED, "Email or password is wrong");
   }
 
   const userResponse = {
@@ -85,9 +85,12 @@ const signInUser = async (userData: any) => {
     name: (user as any).name,
   };
 
-  const isValidPassword = await bcrypt.compare(password, (user as any).password);
+  const isValidPassword = await bcrypt.compare(
+    password,
+    (user as any).password
+  );
   if (!isValidPassword) {
-    throw HttpError(HTTP_STATUS.UNAUTHORIZED, 'Email or password is wrong');
+    throw HttpError(HTTP_STATUS.UNAUTHORIZED, "Email or password is wrong");
   }
 
   if ((user as any).token) {
@@ -102,8 +105,8 @@ const signInUser = async (userData: any) => {
   }
 
   const payload = { id: (user as any).id, email };
-  const token = jwtHelpers.generateToken(payload);
-  const refreshToken = jwtHelpers.generateToken(payload, '7d');
+  const token = jwtHelpers.generateAccessToken(payload);
+  const refreshToken = jwtHelpers.generateRefreshToken(payload);
   await (user as any).update({ token, refreshToken });
 
   return { token, refreshToken, user: userResponse };
@@ -111,22 +114,22 @@ const signInUser = async (userData: any) => {
 
 const refreshUserToken = async (refreshToken: any) => {
   if (!refreshToken) {
-    throw HttpError(HTTP_STATUS.UNAUTHORIZED, 'Not authorized');
+    throw HttpError(HTTP_STATUS.UNAUTHORIZED, "Not authorized");
   }
 
   const { payload, error } = jwtHelpers.verifyToken(refreshToken);
 
   if (error || !payload) {
-    throw HttpError(HTTP_STATUS.FORBIDDEN, 'Invalid or expired refresh token');
+    throw HttpError(HTTP_STATUS.FORBIDDEN, "Invalid or expired refresh token");
   }
 
   const user = await findUser({ email: (payload as any).email });
 
   if (!user || (user as any).refreshToken !== refreshToken) {
-    throw HttpError(HTTP_STATUS.FORBIDDEN, 'Refresh token mismatch');
+    throw HttpError(HTTP_STATUS.FORBIDDEN, "Refresh token mismatch");
   }
 
-  const newAccessToken = jwtHelpers.generateToken({
+  const newAccessToken = jwtHelpers.generateAccessToken({
     id: (user as any).id,
     email: (user as any).email,
   });
@@ -140,7 +143,7 @@ const invalidateUserToken = async (userId: any) => {
   const user = await findUser({ id: userId });
 
   if (!user || !(user as any).token) {
-    throw HttpError(HTTP_STATUS.UNAUTHORIZED, 'Not authorized');
+    throw HttpError(HTTP_STATUS.UNAUTHORIZED, "Not authorized");
   }
 
   await (user as any).update({ token: null, refreshToken: null });
