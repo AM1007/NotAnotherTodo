@@ -23,7 +23,6 @@ class User
   public token!: string | null;
   public refreshToken!: string | null;
 
-  // Timestamp поля от Sequelize
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }

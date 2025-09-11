@@ -33,7 +33,6 @@ const validateBody = (schema: Joi.ObjectSchema) => {
   };
 };
 
-// Роуты
 router.post('/register', validateBody(registerSchema), authControllers.signUpController);
 router.post('/login', validateBody(loginSchema), authControllers.singInController);
 router.post('/logout', authControllers.logOutController);

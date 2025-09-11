@@ -13,10 +13,10 @@ const sequelize = new Sequelize({
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false // Важно для Render.com
+      rejectUnauthorized: false
     },
   },
-  logging: process.env.NODE_ENV === 'dev' ? console.log : false, // Логи только в dev режиме
+  logging: process.env.NODE_ENV === 'dev' ? console.log : false,
 });
 
 export const connectDb = async () => {
@@ -24,10 +24,9 @@ export const connectDb = async () => {
     await sequelize.authenticate();
     console.log("✅ DB connected successfully");
     
-    // Синхронизируем все модели
     await sequelize.sync({ 
-      force: false, // НЕ удалять существующие таблицы
-      alter: true   // Обновлять структуру если нужно
+      force: false,
+      alter: true 
     });
     console.log("✅ Database tables synchronized");
     
